@@ -1,0 +1,39 @@
+﻿@page "/fetchadvicedata"
+@inject HttpClient Http
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@using System.Text.Encodings
+@using Newtonsoft.Json
+
+
+<h4 class="display-4">Click the button below to receive a advice from the internet!.</h4>
+<button @onclick="FetchData"  type="button" class="btn btn-primary">Receive an an advice</button>
+
+<main>
+    <p>
+        @adviceMessage 
+       
+    </p>
+</main>
+@code {
+    private string advice;
+    private AdviceSlip adviceSlip;
+    private string adviceMessage;
+
+    private async Task FetchData()
+    {
+
+        HttpResponseMessage httpResponseMessage = await Http.GetAsync("https://api.adviceslip.com/advice");
+        httpResponseMessage.EnsureSuccessStatusCode();
+        advice = await httpResponseMessage.Content.ReadAsStringAsync();
+        adviceSlip = JsonConvert.DeserializeObject<AdviceSlip>(advice);
+
+        adviceMessage = adviceSlip.slip.advice;
+
+
+    }
+
+          
+}
+
